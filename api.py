@@ -1,45 +1,7 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
 import uvicorn
-
-# ======================================================================
-# ========================== Web Sockets Demo ==========================
-# ======================================================================
-
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
+import time
 
 api = FastAPI()
 
@@ -52,17 +14,28 @@ api.add_middleware(
 )
 
 
-@api.get("/")
-async def get():
-    return HTMLResponse(html)
+@api.websocket("/ws/motor")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    # while True:
+    #     time.sleep(1)
+    #     # data = await websocket.receive_text()
+    #     await websocket.send_text("0")
+    time.sleep(10)
+    await websocket.send_text("180")
 
 
-@api.websocket("/ws")
+@api.websocket("/ws/camera")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
+        data = await websocket.receive_bytes()
+        f = open('image.jpeg', 'w+b')
+        binary_format = bytearray(data)
+        f.write(binary_format)
+        f.close()
+        print("bruh")
+
 
 if __name__ == '__main__':
-    uvicorn.run(api, host='127.0.0.1', port=8080)
+    uvicorn.run(api, host='0.0.0.0', port=8080)

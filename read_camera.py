@@ -1,0 +1,35 @@
+import socket
+import time
+
+HOST = '192.168.43.157'
+PORT = 81
+mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+mysock.connect((HOST, PORT))
+mysock.sendall(b'GET http://192.168.43.157:81/stream HTTP/1.0\r\n\r\n')
+count = 0
+picture = b""
+i = 0
+while True:
+    if i > 5:
+        break
+    i = i + 1
+    data = mysock.recv(5120)
+    if len(data) < 1:
+        break
+    # time.sleep(0.25)
+    count = count + len(data)
+    print(len(data), count)
+    picture = picture + data
+
+mysock.close()
+
+# Look for the end of the header (2 CRLF)
+pos = picture.find(b"\r\n\r\n")
+print('Header length', pos)
+print(picture[:pos].decode())
+
+# Skip past the header and save the picture data
+picture = picture[pos+4:]
+fhand = open("stuff.jpg", "wb")
+fhand.write(picture)
+fhand.close()
