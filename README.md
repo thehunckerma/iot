@@ -1,4 +1,4 @@
-# IOT de merde
+# IOT Project
 
 ### Setup conda env
 
