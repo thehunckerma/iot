@@ -6,11 +6,12 @@ const char *ssid = "bounouna";
 const char *password = "bbbbbbbb";
 const char *websockets_server = "ws://192.168.43.38:8080/ws/motor";
 
-int angle = 0;
+// int angle = 0;
 int prevAngle = 0;
 int angleMin = 2;
 int angleMax = 178;
 int angleStart = (angleMin + angleMax) / 2;
+int angle = angleStart;
 static const int servoPin = 14; // G14 on the board
 
 Servo_ESP32 servo1;
@@ -74,7 +75,11 @@ void setup()
 
     // Connect to wifi
     WiFi.begin(ssid, password);
-
+    delay(1000);
+    WiFi.disconnect();
+    delay(1000);
+    WiFi.begin(ssid, password);
+    delay(1000);
     // Wait some time to connect to wifi
     Serial.println("Waiting for Wifi");
     for (int i = 0; i < 10 && WiFi.status() != WL_CONNECTED; i++)
@@ -84,21 +89,27 @@ void setup()
     }
 
     Serial.println("Connected to Wifi");
-    // Setup Callbacks
-    client.onMessage(onMessageCallback);
-    client.onEvent(onEventsCallback);
-
-    // Connect to server
-    client.connect(websockets_server);
-
-    // Send a message
-    Serial.println("Sending hi..");
-    client.send("Hi Server!");
-    // Send a ping
-    client.ping();
 }
 
 void loop()
 {
-    client.poll();
+    if (!client.available())
+    {
+        // Setup Callbacks
+        client.onMessage(onMessageCallback);
+        client.onEvent(onEventsCallback);
+
+        // Connect to server
+        client.connect(websockets_server);
+
+        // Send a message
+        Serial.println("Sending hi..");
+        client.send("Hi Server!");
+        // Send a ping
+        client.ping();
+    }
+    else
+    {
+        client.poll();
+    }
 }
