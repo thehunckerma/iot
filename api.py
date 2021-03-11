@@ -4,7 +4,6 @@ import uvicorn
 import cv2 as cv
 import numpy as np
 from urllib.request import urlopen
-import keyboard
 
 api = FastAPI()
 
@@ -57,7 +56,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     cv.imshow("", img)
                     cv.waitKey(1)
                     if len(detected_faces) == 1:
-                        if abs(delta) > 20:
+                        if abs(delta) > 40:
                             sig = "1"
                             if delta > 0:
                                 sig = "-1"

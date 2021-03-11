@@ -103,8 +103,8 @@ void loop()
         client.connect(websockets_server);
 
         // Send a message
-        Serial.println("Sending hi..");
-        client.send("Hi Server!");
+        Serial.println("Sending a test message..");
+        client.send("Test!");
         // Send a ping
         client.ping();
     }

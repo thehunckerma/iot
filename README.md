@@ -1,27 +1,22 @@
-# IOT Project
+# IOT Image Processing Project
 
-### Setup conda env
-
-<!-- ```
-conda create -n iot python=3
-conda activate iot
-conda install -c conda-forge fastapi
-conda install -c conda-forge uvicorn
-conda install -c conda-forge opencv=4.1.0
-``` -->
+# Setup RasPi env | FastAPI/Websocket
 
 ```
-pip3 install fastapi uvicorn websockets opencv=4.1.0
+pip3 install fastapi uvicorn websockets opencv=4.1.0 numpy opencv-python
 ```
 
-# Body/face detection
+Upload ./api.py and ./haarcascade_frontalface_alt.xml to the RasPi  
+Run :
 
 ```
-python detect.py
+python api.py
 ```
 
-# Websockets
+# ESP32 CAM
 
-```
-uvicorn api:api --reload
-```
+Upload ./main/main.ino to the device using the Arduino IDE
+
+# ESP32 Servo-Motor
+
+Upload ./motor.ino to the device using the Arduino IDE
